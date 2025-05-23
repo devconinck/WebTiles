@@ -1,0 +1,31 @@
+<div class="widget-area relative min-h-screen" #widgetArea>
+  <app-widget
+    *ngFor="let widget of widgets$ | async; trackBy: trackWidgetById"
+    [widget]="widget"
+    (remove)="removeWidget($event)"
+    (widgetChange)="onWidgetUpdated($event)"
+    class="absolute"
+    [style.width.px]="widget.width"
+    [style.height.px]="widget.height"
+    cdkDrag
+    [cdkDragFreeDragPosition]="widget.position"
+    (cdkDragEnded)="onDragEnded($event, widget)"
+  ></app-widget>
+
+  <div *ngIf="!(widgets$ | async)?.length" class="mt-10 text-center">
+    This workspace is empty. Add a Tile using the '+' button above.
+  </div>
+
+  @if (hasOffScreenWidgets()) {
+    <button
+      hlmBtn
+      size="icon"
+      variant="outline"
+      (click)="cascadeWidgets()"
+      class="fixed right-4 bottom-16 z-9999 rounded-full p-2"
+      aria-label="Cascade Widgets"
+    >
+      <ng-icon hlm size="sm" name="lucideGroup" />
+    </button>
+  }
+</div>

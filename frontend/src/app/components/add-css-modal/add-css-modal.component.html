@@ -1,0 +1,25 @@
+<div class="w-96 p-4">
+  <hlm-dialog-header>
+    <h3 hlmDialogTitle>Tile Customization</h3>
+    <p hlmDialogDescription>
+      Customize your Tile with CSS presets or add your own custom CSS styles.
+    </p>
+  </hlm-dialog-header>
+  <hlm-tabs tab="settings" class="mx-auto block w-full max-w-3xl">
+    <hlm-tabs-list class="grid w-full grid-cols-2">
+      <button hlmTabsTrigger="presets">Presets</button>
+      <button hlmTabsTrigger="customCss">Custom CSS</button>
+    </hlm-tabs-list>
+
+    <div hlmTabsContent="presets">
+      <app-add-presets />
+    </div>
+
+    <div hlmTabsContent="customCss">
+      <app-add-custom-css />
+    </div>
+  </hlm-tabs>
+  <hlm-dialog-footer>
+    <button hlmBtn (click)="onSubmit()" type="submit">Save</button>
+  </hlm-dialog-footer>
+</div>

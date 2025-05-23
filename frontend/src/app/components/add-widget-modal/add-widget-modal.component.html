@@ -1,0 +1,50 @@
+<hlm-dialog-header class="z-9999">
+  <h3 hlmDialogTitle>Add New Tile</h3>
+  <p hlmDialogDescription>
+    Enter the details for the website you want to embed as a tile.
+  </p>
+</hlm-dialog-header>
+
+<form [formGroup]="widgetForm" (ngSubmit)="onSubmit()" class="z-9999 space-y-4">
+  <div>
+    <label hlmLabel for="title">Title</label>
+    <input
+      hlmInput
+      id="title"
+      formControlName="title"
+      placeholder="Enter a title"
+      class="w-full"
+    />
+    <div *ngIf="formErrors().title" class="mt-1 text-sm">
+      {{ formErrors().title }}
+    </div>
+  </div>
+
+  <div>
+    <label hlmLabel for="url">Website URL</label>
+    <input
+      hlmInput
+      id="url"
+      formControlName="url"
+      placeholder="https://example.com"
+      class="w-full"
+    />
+    <div *ngIf="formErrors().url" class="mt-1 text-sm">
+      {{ formErrors().url }}
+    </div>
+  </div>
+
+  <hlm-dialog-footer>
+    <button hlmBtn type="button" variant="ghost" (click)="onCancel()">
+      Cancel
+    </button>
+    <button
+      hlmBtn
+      type="submit"
+      variant="secondary"
+      [disabled]="!widgetForm.valid"
+    >
+      Add Tile
+    </button>
+  </hlm-dialog-footer>
+</form>

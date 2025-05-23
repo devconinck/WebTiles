@@ -1,0 +1,52 @@
+{
+  "name": "WebTiles",
+  "version": "1.0.1",
+  "manifest_version": 3,
+  "description": "Your personal web dashboard, with customizable tiles for your favorite websites.",
+  "permissions": [
+    "declarativeNetRequest",
+    "storage",
+    "scripting",
+    "tabs",
+    "webNavigation",
+    "favicon"
+  ],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["dist/browser/index.html", "404.html", "dist/browser/*"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; style-src 'self' 'unsafe-inline'; object-src 'self'; "
+  },
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "ruleset_1",
+        "priority": 1,
+        "enabled": true,
+        "path": "rules.json"
+      }
+    ]
+  },
+  "action": {
+    "default_icon": {
+      "16": "images/icon16.png",
+      "32": "images/icon32.png",
+      "48": "images/icon48.png",
+      "128": "images/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "images/icon16.png",
+    "32": "images/icon32.png",
+    "48": "images/icon48.png",
+    "128": "images/icon128.png"
+  }
+}

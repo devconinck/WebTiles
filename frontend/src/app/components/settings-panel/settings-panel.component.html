@@ -1,0 +1,60 @@
+<brn-popover class="z-9999">
+  <button hlmBtn variant="ghost" brnPopoverTrigger>
+    <ng-icon hlm size="sm" name="lucideSettings" />
+  </button>
+
+  <div hlmPopoverContent *brnPopoverContent="let ctx" class="z-9999 w-96 p-4">
+    <div>
+      <h2 class="text-lg font-semibold">Settings</h2>
+    </div>
+    <hlm-tabs tab="appearance" class="mx-auto block w-full max-w-3xl">
+      <hlm-tabs-list class="flex w-full justify-between">
+        <button hlmTabsTrigger="general">General</button>
+        <button hlmTabsTrigger="appearance">Appearance</button>
+        <button hlmTabsTrigger="shortcuts">Shortcuts</button>
+        <button hlmTabsTrigger="bangs">!Bangs</button>
+      </hlm-tabs-list>
+
+      <div hlmTabsContent="general">
+        <app-settings-general-tab />
+      </div>
+
+      <div hlmTabsContent="appearance">
+        <app-appearance-settings />
+      </div>
+
+      <div hlmTabsContent="shortcuts">
+        <app-settings-shortcuts-tab />
+      </div>
+
+      <div hlmTabsContent="bangs">
+        <h3 class="text-md mb-2 font-semibold">What are Bangs?</h3>
+        <p class="mb-2">
+          Bangs are shortcuts that let you quickly search on other sites
+          directly from your search bar. By typing a bang (an exclamation mark
+          followed by a keyword), you can instantly redirect your search to a
+          specific website.
+        </p>
+        <p class="mb-2">For example, try these popular bangs:</p>
+        <ul class="mb-2 ml-6 list-disc">
+          <li><strong>!t3</strong> &mdash; Search on T3 Chat</li>
+          <li><strong>!gt</strong> &mdash; Search on Google Translate</li>
+          <li><strong>!a</strong> &mdash; Search on Amazon</li>
+        </ul>
+        <p class="mb-2">
+          You can find a full list of available bangs on the
+          <a
+            href="https://duckduckgo.com/bangs"
+            target="_blank"
+            class="text-blue-600 underline"
+            >DuckDuckGo Bangs page</a
+          >.
+        </p>
+        <p>
+          <strong>Note:</strong> If you do not use a bang, your search will
+          default to Google.
+        </p>
+      </div>
+    </hlm-tabs>
+  </div>
+</brn-popover>

@@ -1,0 +1,32 @@
+<div class="flex flex-col gap-4">
+  <div class="flex items-center justify-between">
+    <h3 class="text-sm font-medium">Custom CSS</h3>
+  </div>
+  <code-editor
+    #editor
+    class="h-[300px] min-h-[150px] w-full"
+    [(ngModel)]="customCss"
+    [theme]="options.theme"
+    [setup]="options.setup"
+    [disabled]="options.disabled"
+    [readonly]="options.readonly"
+    [placeholder]="options.placeholder"
+    [indentWithTab]="options.indentWithTab"
+    [indentUnit]="options.indentUnit"
+    [lineWrapping]="options.lineWrapping"
+    [highlightWhitespace]="options.highlightWhitespace"
+    [language]="options.language"
+    [languages]="languages"
+  />
+  <div className="rounded-md bg-muted/50 p-3">
+    <h4 className="text-sm font-medium mb-2">CSS Tips</h4>
+    <ul className="text-xs space-y-1 text-muted-foreground">
+      <li>
+        • Add
+        <code className="text-xs bg-muted px-1 rounded">!important</code> to
+        override default styles
+      </li>
+      <li>• Changes apply to the current tile only</li>
+    </ul>
+  </div>
+</div>

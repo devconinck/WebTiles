@@ -1,0 +1,171 @@
+<div
+  class="group flex h-full w-full flex-col overflow-hidden rounded-lg"
+  [style.position]="'relative'"
+>
+  <!-- HEADER (conditionally shown at top) -->
+  <div
+    *ngIf="!showHandleBelow()"
+    class="mt-2 flex cursor-move items-center justify-between rounded-lg border-t-2 border-r-2 border-l-2 bg-background p-2 text-foreground shadow-sm"
+    [style.borderColor]="accentColor()"
+    [class.opacity-0]="showHeaderOnHover()"
+    [class.group-hover:opacity-100]="showHeaderOnHover()"
+    [class.transition-opacity]="showHeaderOnHover()"
+    [class.duration-200]="showHeaderOnHover()"
+  >
+    <img [src]="faviconUrl()" class="h-4 w-4" />
+    <h3 class="ml-2 flex-grow truncate text-sm font-medium">
+      {{ widget.title }}
+    </h3>
+    <div class="flex items-center space-x-1">
+      <!-- Header Buttons -->
+      <button
+        hlmBtn
+        variant="ghost"
+        class="rounded-full p-2"
+        (click)="refreshWidget()"
+      >
+        <ng-icon hlm name="lucideRefreshCw" size="sm" />
+        <span class="sr-only">Refresh Tile</span>
+      </button>
+      <hlm-dialog>
+        <button
+          brnDialogTrigger
+          hlmBtn
+          variant="ghost"
+          class="rounded-full p-2"
+        >
+          <ng-icon hlm name="lucidePaintbrush" size="sm" />
+          <span class="sr-only">Customize CSS</span>
+        </button>
+        <hlm-dialog-content
+          class="sm:max-w-[425px]"
+          *brnDialogContent="let ctx"
+        >
+          <app-add-css-modal
+            [initialCss]="widget.customCss"
+            (save)="onCustomCssSaved($event)"
+          ></app-add-css-modal>
+        </hlm-dialog-content>
+      </hlm-dialog>
+      <button
+        (click)="removeWidget()"
+        hlmBtn
+        variant="ghost"
+        class="rounded-full p-2"
+      >
+        <ng-icon hlm name="lucideX" size="sm" />
+        <span class="sr-only">Remove Tile</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- RESIZABLE CONTENT WRAPPER -->
+  <div
+    appResizable
+    [widget]="widget"
+    (resized)="onWidgetResized($event)"
+    class="resizable-content-wrapper relative flex-grow rounded-lg"
+    [style.boxShadow]="'inset 0 0 0 2px ' + accentColor()"
+    #resizableWrapper
+  >
+    <!-- LOADER -->
+    <div
+      *ngIf="isLoading()"
+      class="loader-container absolute inset-0 z-20 flex items-center justify-center bg-background/50"
+    >
+      <svg
+        class="h-8 w-8 animate-spin text-primary"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          class="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          stroke-width="4"
+        ></circle>
+        <path
+          class="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        ></path>
+      </svg>
+    </div>
+
+    <!-- IFRAME -->
+    <iframe
+      #widgetIframe
+      *ngIf="safeUrl()"
+      [src]="safeUrl()"
+      (load)="onIframeLoad()"
+      (error)="onIframeError()"
+      (click)="onWidgetClick()"
+      class="iframe-content block h-full w-full overflow-x-auto"
+      [title]="widget.title || 'Embedded Content'"
+      allow="camera; microphone; encrypted-media; picture-in-picture ; storage-access; fullscreen; display-capture; autoplay; "
+      scrolling="yes"
+      frameborder="0"
+    >
+    </iframe>
+  </div>
+
+  <!-- HEADER (conditionally shown at bottom) -->
+  <div
+    *ngIf="showHandleBelow()"
+    class="mb-2 flex cursor-move items-center justify-between rounded-lg border-r-2 border-b-2 border-l-2 bg-background p-2 text-foreground shadow-sm"
+    [style.borderColor]="accentColor()"
+    [class.opacity-0]="showHeaderOnHover()"
+    [class.group-hover:opacity-100]="showHeaderOnHover()"
+    [class.transition-opacity]="showHeaderOnHover()"
+    [class.duration-200]="showHeaderOnHover()"
+  >
+    <img [src]="faviconUrl()" class="h-4 w-4" />
+    <h3 class="ml-2 flex-grow truncate text-sm font-medium">
+      {{ widget.title }}
+    </h3>
+    <div class="flex items-center space-x-1">
+      <!-- Bottom Header Buttons (same as top) -->
+      <button
+        hlmBtn
+        variant="ghost"
+        class="rounded-full p-2"
+        (click)="refreshWidget()"
+      >
+        <ng-icon hlm name="lucideRefreshCw" size="sm" />
+        <span class="sr-only">Refresh Tile</span>
+      </button>
+      <hlm-dialog>
+        <button
+          brnDialogTrigger
+          hlmBtn
+          variant="ghost"
+          class="rounded-full p-2"
+        >
+          <ng-icon hlm name="lucidePaintbrush" size="sm" />
+          <span class="sr-only">Customize CSS</span>
+        </button>
+        <hlm-dialog-content
+          class="sm:max-w-[425px]"
+          *brnDialogContent="let ctx"
+        >
+          <app-add-css-modal
+            [initialCss]="widget.customCss"
+            (save)="onCustomCssSaved($event)"
+          ></app-add-css-modal>
+        </hlm-dialog-content>
+      </hlm-dialog>
+      <button
+        (click)="removeWidget()"
+        hlmBtn
+        variant="ghost"
+        class="rounded-full p-2"
+      >
+        <ng-icon hlm name="lucideX" size="sm" />
+        <span class="sr-only">Remove Tile</span>
+      </button>
+    </div>
+  </div>
+</div>

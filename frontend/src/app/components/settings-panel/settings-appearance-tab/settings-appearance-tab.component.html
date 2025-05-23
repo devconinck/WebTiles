@@ -1,0 +1,330 @@
+<div class="h-96 overflow-auto rounded-md border border-border">
+  <div class="pr-4">
+    <div class="space-y-6 p-1">
+      <!-- Theme Selection -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium">Theme</h3>
+        <div class="grid grid-cols-3 gap-3">
+          <!-- Light Theme -->
+          <button
+            type="button"
+            (click)="toggleTheme()"
+            class="relative flex flex-col items-center justify-center rounded-md border-2 p-3 transition-all"
+            [class.border-primary]="settings().theme === 'light'"
+            [class.border-muted]="settings().theme !== 'light'"
+            [class.hover:border-muted-foreground]="settings().theme !== 'light'"
+          >
+            <div
+              class="mb-2 flex h-10 w-10 items-center justify-center rounded-full"
+            >
+              <ng-icon name="lucideSun" class="h-5 w-5"></ng-icon>
+            </div>
+            <span class="text-sm font-medium">Light</span>
+            <span
+              *ngIf="settings().theme === 'light'"
+              class="absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded-full"
+            >
+              <ng-icon name="lucideCheck" class="h-3 w-3"></ng-icon>
+            </span>
+          </button>
+
+          <!-- Dark Theme -->
+          <button
+            type="button"
+            (click)="toggleTheme()"
+            class="relative flex flex-col items-center justify-center rounded-md border-2 p-3 transition-all"
+            [class.border-primary]="settings().theme === 'dark'"
+            [class.border-muted]="settings().theme !== 'dark'"
+            [class.hover:border-muted-foreground]="settings().theme !== 'dark'"
+          >
+            <div
+              class="mb-2 flex h-10 w-10 items-center justify-center rounded-full"
+            >
+              <ng-icon name="lucideMoon" class="h-5 w-5"></ng-icon>
+            </div>
+            <span class="text-sm font-medium">Dark</span>
+            <span
+              *ngIf="settings().theme === 'dark'"
+              class="absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded-full"
+            >
+              <ng-icon name="lucideCheck" class="h-3 w-3"></ng-icon>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <brn-separator hlmSeparator></brn-separator>
+
+      <!-- Background Selection -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium">Background</h3>
+
+        <!-- Background Type Tabs -->
+        <div class="flex border-b">
+          <button
+            class="flex items-center gap-2 px-4 py-2 text-sm font-medium"
+            [class.border-b-2]="backgroundTab() === 'solid'"
+            [class.border-primary]="backgroundTab() === 'solid'"
+            [class.text-primary]="backgroundTab() === 'solid'"
+            (click)="onBackgroundTabChange('solid')"
+          >
+            <ng-icon name="lucidePalette" class="h-4 w-4"></ng-icon>
+            <span>Solid</span>
+          </button>
+          <button
+            class="flex items-center gap-2 px-4 py-2 text-sm font-medium"
+            [class.border-b-2]="backgroundTab() === 'gradient'"
+            [class.border-primary]="backgroundTab() === 'gradient'"
+            [class.text-primary]="backgroundTab() === 'gradient'"
+            (click)="onBackgroundTabChange('gradient')"
+          >
+            <ng-icon name="lucideContrast" class="h-4 w-4"></ng-icon>
+            <span>Gradient</span>
+          </button>
+          <button
+            class="flex items-center gap-2 px-4 py-2 text-sm font-medium"
+            [class.border-b-2]="backgroundTab() === 'image'"
+            [class.border-primary]="backgroundTab() === 'image'"
+            [class.text-primary]="backgroundTab() === 'image'"
+            (click)="onBackgroundTabChange('image')"
+          >
+            <ng-icon name="lucideImage" class="h-4 w-4"></ng-icon>
+            <span>Image</span>
+          </button>
+        </div>
+
+        <!-- Solid Color Background -->
+        <div *ngIf="backgroundTab() === 'solid'" class="space-y-4 pt-3">
+          <div class="grid grid-cols-3 gap-2">
+            <button
+              *ngFor="let color of colorPresets"
+              type="button"
+              (click)="onBackgroundValueChange(color.value)"
+              class="relative flex flex-col items-center justify-center rounded-md border-2 p-3 transition-all"
+              [class.border-primary]="
+                isBackgroundSelected('solid', color.value)
+              "
+              [class.border-muted]="!isBackgroundSelected('solid', color.value)"
+              [class.hover:border-muted-foreground]="
+                !isBackgroundSelected('solid', color.value)
+              "
+            >
+              <div
+                class="mb-1 h-6 w-6 rounded-full"
+                [ngClass]="color.preview"
+              ></div>
+              <span class="text-sm font-medium">{{ color.name }}</span>
+              <span
+                *ngIf="isBackgroundSelected('solid', color.value)"
+                class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full"
+              >
+                <ng-icon name="lucideCheck" class="h-2.5 w-2.5"></ng-icon>
+              </span>
+            </button>
+          </div>
+          <div class="flex items-center gap-2">
+            <label hlmLabel class="text-sm">Custom:</label>
+            <div class="flex items-center gap-2 rounded-md border p-1 pl-2">
+              <input
+                type="color"
+                [value]="settings().background.value"
+                (change)="onBackgroundValueChange($any($event.target).value)"
+                class="h-6 w-6 border-0 bg-transparent p-0"
+              />
+              <span class="text-xs text-muted-foreground">{{
+                settings().background.value
+              }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gradient Background -->
+        <div *ngIf="backgroundTab() === 'gradient'" class="space-y-4 pt-3">
+          <div class="grid grid-cols-2 gap-3">
+            <button
+              *ngFor="let gradient of gradientPresets"
+              type="button"
+              (click)="onBackgroundValueChange(gradient.value)"
+              class="relative flex flex-col items-center justify-center rounded-md border-2 p-3 transition-all"
+              [class.border-primary]="
+                isBackgroundSelected('gradient', gradient.value)
+              "
+              [class.border-muted]="
+                !isBackgroundSelected('gradient', gradient.value)
+              "
+              [class.hover:border-muted-foreground]="
+                !isBackgroundSelected('gradient', gradient.value)
+              "
+            >
+              <div
+                class="mb-1 h-12 w-full rounded-md bg-gradient-to-br"
+                [ngClass]="gradient.preview"
+              ></div>
+              <span class="text-sm font-medium">{{ gradient.name }}</span>
+              <span
+                *ngIf="isBackgroundSelected('gradient', gradient.value)"
+                class="absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded-full"
+              >
+                <ng-icon name="lucideCheck" class="h-3 w-3"></ng-icon>
+              </span>
+            </button>
+          </div>
+          <div class="flex items-center gap-2">
+            <label hlmLabel class="text-sm">Custom:</label>
+            <input
+              type="text"
+              [value]="settings().background.value"
+              (input)="onBackgroundValueChange($any($event.target).value)"
+              class="flex-1 rounded-md border px-3 py-1 text-xs"
+              placeholder="linear-gradient(...)"
+            />
+          </div>
+        </div>
+
+        <!-- Image Background -->
+        <div *ngIf="backgroundTab() === 'image'" class="space-y-4 pt-3">
+          <div class="grid grid-cols-2 gap-3">
+            <button
+              *ngFor="let image of imagePresets"
+              type="button"
+              (click)="onBackgroundValueChange(image.value)"
+              class="relative flex flex-col items-center justify-center rounded-md border-2 p-3 transition-all"
+              [class.border-primary]="
+                isBackgroundSelected('image', image.value)
+              "
+              [class.border-muted]="!isBackgroundSelected('image', image.value)"
+              [class.hover:border-muted-foreground]="
+                !isBackgroundSelected('image', image.value)
+              "
+            >
+              <div
+                class="mb-1 h-12 w-full rounded-md bg-cover bg-center"
+                [style.background-image]="
+                  image.value ? 'url(' + image.value + ')' : 'none'
+                "
+                [style.background-color]="
+                  !image.value ? '#f1f5f9' : 'transparent'
+                "
+              >
+                <div
+                  *ngIf="!image.value"
+                  class="flex h-full items-center justify-center"
+                >
+                  <ng-icon name="lucideImage" class="h-6 w-6"></ng-icon>
+                </div>
+              </div>
+              <span class="text-sm font-medium">{{ image.name }}</span>
+              <span
+                *ngIf="isBackgroundSelected('image', image.value)"
+                class="absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded-full"
+              >
+                <ng-icon name="lucideCheck" class="h-3 w-3"></ng-icon>
+              </span>
+            </button>
+          </div>
+          <!-- <div
+            *ngIf="isBackgroundSelected('image', imagePresets[4].value)"
+            class="space-y-2"
+          >
+            <label hlmLabel class="text-sm">Custom Image URL:</label>
+            <input
+              type="text"
+              [(ngModel)]="customImageUrl"
+              (blur)="onCustomImageUrlChange(customImageUrl())"
+              class="w-full rounded-md border px-3 py-2 text-sm"
+              placeholder="https://example.com/image.jpg"
+            />
+          </div> -->
+        </div>
+      </div>
+      <brn-separator hlmSeparator></brn-separator>
+
+      <!-- Accent Color Selection -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium">Accent Color</h3>
+        <div class="grid grid-cols-4 gap-2">
+          <button
+            *ngFor="let color of accentColors"
+            type="button"
+            (click)="onAccentColorChange(color.value)"
+            class="relative flex flex-col items-center justify-center rounded-md border-2 p-3 transition-all"
+            [class.border-primary]="settings().accentColor === color.value"
+            [class.border-muted]="settings().accentColor !== color.value"
+            [class.hover:border-muted-foreground]="
+              settings().accentColor !== color.value
+            "
+          >
+            <div
+              class="mb-1 h-6 w-6 rounded-full"
+              [ngClass]="color.preview"
+            ></div>
+            <span class="text-sm font-medium">{{ color.name }}</span>
+            <span
+              *ngIf="settings().accentColor === color.value"
+              class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full"
+            >
+              <ng-icon name="lucideCheck" class="h-2.5 w-2.5"></ng-icon>
+            </span>
+          </button>
+        </div>
+        <div class="flex items-center gap-2">
+          <label hlmLabel class="text-sm">Custom:</label>
+          <div class="flex items-center gap-2 rounded-md border p-1 pl-2">
+            <input
+              type="color"
+              [value]="settings().accentColor"
+              (change)="onAccentColorChange($any($event.target).value)"
+              class="h-6 w-6 border-0 bg-transparent p-0"
+            />
+            <span class="text-xs text-muted-foreground">{{
+              settings().accentColor
+            }}</span>
+          </div>
+        </div>
+      </div>
+
+      <brn-separator hlmSeparator></brn-separator>
+
+      <!-- Display Options -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-medium">Display Options</h3>
+        <p>Coming soon</p>
+
+        <div class="space-y-3">
+          <!-- <div class="flex items-center justify-between">
+            <label hlmLabel class="flex-1">Show Google Search</label>
+            <hlm-switch
+              hlmSwitch
+              [checked]="settings().showSearchBar"
+              (checkedChange)="onToggleGoogleSearch($event)"
+            />
+          </div> -->
+
+          <!-- <div class="flex items-center justify-between">
+            <label hlmLabel class="flex-1">Show Header on Hover</label>
+            <hlm-switch
+              [checked]="settings().titleOnHover"
+              (checkedChange)="onToggleHeaderOnHover($event)"
+            />
+          </div>
+
+          <div class="flex items-center justify-between">
+            <label hlmLabel class="flex-1">Show History Shortcut</label>
+            <hlm-switch
+              [checked]="settings().showHistory"
+              (checkedChange)="onToggleHistoryShortcut($event)"
+            />
+          </div>
+
+          <div class="flex items-center justify-between">
+            <label hlmLabel class="flex-1">Show Bookmarks Shortcut</label>
+            <hlm-switch
+              [checked]="settings().showBookmarks"
+              (checkedChange)="onToggleBookmarksShortcut($event)"
+            />
+          </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

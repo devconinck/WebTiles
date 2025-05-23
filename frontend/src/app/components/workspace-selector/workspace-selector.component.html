@@ -1,0 +1,231 @@
+<ng-container *ngIf="activeWorkspace$ | async as activeWorkspace">
+  <brn-popover>
+    <button
+      hlmBtn
+      variant="outline"
+      brnPopoverTrigger
+      class="w-[240px] justify-between"
+    >
+      {{ activeWorkspace ? activeWorkspace.name : 'Select workspace' }}
+      <ng-icon
+        hlm
+        name="lucideChevronsUpDown"
+        class="ml-auto h-4 w-4 shrink-0 opacity-50"
+      />
+    </button>
+    <div
+      hlmPopoverContent
+      hlm
+      *brnPopoverContent="let ctx"
+      class="z-9999 w-[240px] p-0"
+    >
+      <hlm-command class="w-[240px] p-0">
+        <hlm-command-list>
+          <hlm-command-group-label> Manage </hlm-command-group-label>
+          <div class="space-y-2 px-1 py-2">
+            <ng-container *ngIf="workspaces$ | async as workspaces">
+              <div
+                *ngFor="let ws of workspaces"
+                class="flex cursor-pointer items-center justify-between rounded-md border p-2"
+                [class.border-primary]="activeWorkspace?.id === ws.id"
+                [class.bg-muted]="activeWorkspace?.id === ws.id"
+                (click)="selectWorkspace(ws); ctx.close()"
+              >
+                <ng-container
+                  *ngIf="editingWorkspaceId() === ws.id; else displayMode"
+                >
+                  <div
+                    class="flex flex-1 items-center space-x-1"
+                    (click)="$event.stopPropagation()"
+                  >
+                    <input
+                      hlmInput
+                      [ngModel]="editingWorkspaceName()"
+                      (ngModelChange)="editingWorkspaceName.set($event)"
+                      (keydown)="handleEditKeyDown($event)"
+                      class="h-7 flex-grow"
+                      id="edit-input-{{ ws.id }}"
+                    />
+                    <button
+                      hlmBtn
+                      size="icon"
+                      variant="ghost"
+                      (click)="saveEditing(); $event.stopPropagation()"
+                      class="h-7 w-7 shrink-0"
+                    >
+                      <ng-icon
+                        hlm
+                        name="lucideSave"
+                        size="xs"
+                        class="h-3 w-3"
+                      />
+                      <span class="sr-only">Save</span>
+                    </button>
+                    <button
+                      hlmBtn
+                      size="icon"
+                      variant="ghost"
+                      (click)="cancelEditing(); $event.stopPropagation()"
+                      class="h-7 w-7 shrink-0"
+                    >
+                      <ng-icon hlm name="lucideX" size="xs" class="h-3 w-3" />
+                      <span class="sr-only">Cancel</span>
+                    </button>
+                  </div>
+                </ng-container>
+
+                <ng-template #displayMode>
+                  <div
+                    class="flex-1 truncate pr-1 text-sm font-medium"
+                    title="{{ ws.name }}"
+                  >
+                    {{ ws.name }}
+                  </div>
+                  <div class="flex items-center space-x-0.5">
+                    <button
+                      hlmBtn
+                      size="icon"
+                      variant="ghost"
+                      (click)="exportWorkspace(ws); $event.stopPropagation()"
+                      class="h-7 w-7 shrink-0"
+                    >
+                      <ng-icon
+                        hlm
+                        name="lucideShare2"
+                        size="xs"
+                        class="h-3 w-3"
+                      />
+                      <span class="sr-only">Share</span>
+                    </button>
+
+                    <button
+                      hlmBtn
+                      size="icon"
+                      variant="ghost"
+                      (click)="startEditing(ws); $event.stopPropagation()"
+                      class="h-7 w-7 shrink-0"
+                    >
+                      <ng-icon
+                        hlm
+                        name="lucidePencil"
+                        size="xs"
+                        class="h-3 w-3"
+                      />
+                      <span class="sr-only">Edit</span>
+                    </button>
+                    <button
+                      hlmBtn
+                      size="icon"
+                      variant="ghost"
+                      (click)="
+                        removeWorkspace(ws.id, activeWorkspace?.id === ws.id);
+                        $event.stopPropagation()
+                      "
+                      class="h-7 w-7 shrink-0"
+                      [disabled]="workspaces.length <= 1"
+                      [class.opacity-50]="workspaces.length <= 1"
+                      [class.cursor-not-allowed]="workspaces.length <= 1"
+                    >
+                      <ng-icon
+                        hlm
+                        name="lucideTrash2"
+                        size="xs"
+                        class="h-3 w-3"
+                      />
+                      <span class="sr-only">Delete</span>
+                    </button>
+                  </div>
+                </ng-template>
+              </div>
+            </ng-container>
+          </div>
+
+          <div class="flex items-center space-x-2 px-1 pt-1 pb-2">
+            <input
+              hlmInput
+              placeholder="New workspace..."
+              [ngModel]="newWorkspaceName()"
+              (ngModelChange)="newWorkspaceName.set($event)"
+              (keydown)="handleAddKeyDown($event)"
+              class="h-8 flex-grow"
+            />
+            <button
+              hlmBtn
+              variant="outline"
+              size="sm"
+              (click)="addWorkspace()"
+              [disabled]="newWorkspaceName().trim() === ''"
+              class="h-8 shrink-0"
+            >
+              Add
+            </button>
+          </div>
+
+          <!-- Advanced options toggle -->
+          <div class="border-t px-2 py-1.5">
+            <button
+              class="flex h-5 w-full cursor-pointer items-center justify-between text-xs text-muted-foreground transition-colors hover:text-foreground"
+              (click)="showAdvancedOptions.set(!showAdvancedOptions())"
+            >
+              <span>Advanced options</span>
+              <ng-icon
+                hlm
+                size="xs"
+                name="lucideChevronsUpDown"
+                class="h-3 w-3"
+              />
+            </button>
+          </div>
+
+          <!-- Import/Export options -->
+          <div
+            *ngIf="showAdvancedOptions()"
+            class="space-y-2 border-t bg-muted/50 px-2 py-2"
+          >
+            <div class="flex items-center gap-2">
+              <button
+                hlmBtn
+                variant="ghost"
+                size="sm"
+                (click)="exportAllWorkspaces()"
+                class="h-7 w-full px-2 text-xs text-muted-foreground hover:text-foreground"
+              >
+                <ng-icon
+                  hlm
+                  name="lucideDownload"
+                  size="xs"
+                  class="mr-1 h-3 w-3"
+                />
+                Export all workspaces
+              </button>
+            </div>
+            <div class="flex items-center gap-2">
+              <button
+                hlmBtn
+                variant="ghost"
+                size="sm"
+                (click)="triggerFileInput()"
+                class="h-7 w-full px-2 text-xs text-muted-foreground hover:text-foreground"
+              >
+                <ng-icon
+                  hlm
+                  name="lucideUpload"
+                  size="xs"
+                  class="mr-1 h-3 w-3"
+                />
+                Import workspaces
+              </button>
+              <input
+                #fileInput
+                type="file"
+                (change)="handleFileSelect($event)"
+                accept=".json"
+                class="hidden"
+              />
+            </div>
+          </div>
+        </hlm-command-list>
+      </hlm-command>
+    </div>
+  </brn-popover>
+</ng-container>
